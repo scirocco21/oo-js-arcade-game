@@ -15,7 +15,12 @@ class Enemy {
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
-  return this.speed * dt;
+   let renderSpeed = this.speed * dt;
+   if (this.x < 400) {
+     this.x = this.x + renderSpeed;
+   } else {
+     this.x = 0;
+   }
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
@@ -32,7 +37,8 @@ Enemy.prototype.render = function() {
 class Player {
   constructor() {
     this.sprite = 'images/char-boy.png';
-    this.start = [0, 150]
+    this.x = 200;
+    this.y = 400;
   }
 }
 
@@ -42,8 +48,16 @@ Player.prototype.update = function(dt) {
 Player.prototype.render = function() {
  ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
-Player.prototype.handleInput = function() {
-
+Player.prototype.handleInput = function(direction) {
+  if (direction === 'left') {
+    this.x = this.x - 40;
+  } else if (direction === 'right') {
+    this.x = this.x + 40;
+  } else if (direction === 'up') {
+    this.y = this.y - 40;
+  } else if (direction === 'down') {
+    this.y = this.y + 40;
+  }
 }
 
 let player = new Player();
@@ -51,11 +65,7 @@ let player = new Player();
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-let enemy = new Enemy(2, 0, 230);
-let allEnemies = [];
-allEnemies.push(enemy);
-
-
+let allEnemies = [new Enemy(200, 0, 230), new Enemy(100,0,146)];
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
