@@ -21,6 +21,7 @@ Enemy.prototype.update = function(dt) {
    } else {
      this.x = 0;
    }
+   this.checkCollisions();
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
@@ -39,6 +40,7 @@ class Player {
     this.sprite = 'images/char-boy.png';
     this.x = 200;
     this.y = 400;
+    this.speed = 100;
   }
 }
 
@@ -74,7 +76,16 @@ Player.prototype.handleInput = function(direction) {
   }
 }
 
-Player.prototype.checkCollisions
+Enemy.prototype.checkCollisions = function() {
+    if (player.x  + 40 >= this.x &&
+        this.x + 40 >= player.x &&
+        player.y + 40 >= this.y &&
+        this.y + 40 >= player.y
+        ) {
+      player.x = 200;
+      player.y = 400;
+    }
+  }
 
 let player = new Player();
 
