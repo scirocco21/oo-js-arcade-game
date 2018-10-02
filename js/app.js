@@ -45,20 +45,36 @@ class Player {
 
 Player.prototype.update = function(dt) {
 };
+
 Player.prototype.render = function() {
  ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
+
 Player.prototype.handleInput = function(direction) {
-  if (direction === 'left') {
-    this.x = this.x - 40;
-  } else if (direction === 'right') {
-    this.x = this.x + 40;
-  } else if (direction === 'up') {
-    this.y = this.y - 40;
-  } else if (direction === 'down') {
-    this.y = this.y + 40;
+  switch (direction) {
+    case 'left':
+      if (this.x >= 40) {
+        this.x = this.x - 40;
+      }
+      break;
+    case 'right':
+      if (this.x <= 360) {
+        this.x = this.x + 40;
+      }
+      break;
+    case 'up':
+      if (this.y >= 40) {
+        this.y = this.y - 40;
+      }
+      break;
+    case 'down':
+      if (this.y <= 360) {
+        this.y = this.y + 40;
+      }
   }
 }
+
+Player.prototype.checkCollisions
 
 let player = new Player();
 
