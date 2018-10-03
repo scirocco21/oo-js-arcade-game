@@ -1,3 +1,10 @@
+const board = {
+  leftEdge: 0,
+  rightEdge: 400,
+  topEdge: 0,
+  bottomEdge: 400
+};
+
 // Enemies our player must avoid
 class Enemy {
   constructor(speed, x, y) {
@@ -6,6 +13,9 @@ class Enemy {
     this.speed = speed;
     this.x = x;
     this.y = y;
+    // hardcode width  and height as long as there is only one enemy type
+    this.width = 40;
+    this.height = 30;
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
@@ -15,16 +25,16 @@ class Enemy {
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
+  // You should multiply any movement by the dt parameter
+  // which will ensure the game runs at the same speed for
+  // all computers.
    let renderSpeed = this.speed * dt;
-   if (this.x < 400) {
+   if (this.x < board["rightEdge"]) {
      this.x = this.x + renderSpeed;
    } else {
      this.x = 0;
-   }
+   };
    this.checkCollisions();
-    // You should multiply any movement by the dt parameter
-    // which will ensure the game runs at the same speed for
-    // all computers.
 };
 
 // Draw the enemy on the screen, required method for game
@@ -32,16 +42,15 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-
+// enemies and player need to be contiguous, so all four conditions below have to apply jointly, not just one
 Enemy.prototype.checkCollisions = function() {
   if (
-    player.x  + 40 >= this.x &&
-    this.x + 40 >= player.x &&
-    player.y + 40 >= this.y &&
-    this.y + 40 >= player.y
+    player.x  + player.width >= this.x &&
+    this.x + this.width >= player.x &&
+    player.y + player.height >= this.y &&
+    this.y + this.height >= player.y
     ) {
-    player.x = 200;
-    player.y = 400;
+    player.toStart()
   }
 }
 
@@ -51,56 +60,64 @@ Enemy.prototype.checkCollisions = function() {
 class Player {
   constructor() {
     this.sprite = 'images/char-boy.png';
-    this.x = 200;
-    this.y = 400;
-    this.speed = 100;
+    // center player sprite
+    this.x = board["rightEdge"]/2;
+    // place player at bottom of canvas
+    this.y = board["bottomEdge"];
+    this.speed = 40;
+    // hardcode height and width as long as only one type of character is available
+    this.height = 40;
+    this.width = 30;
   }
 }
 
+Player.prototype.toStart = function() {
+  this.x = board["rightEdge"]/2;
+  this.y = board["bottomEdge"];
+}
 
 Player.prototype.isOver = function() {
-  return this.y <= 50 ? true : false;
+  return this.y <= this.height ? true : false;
 }
 
-
-Player.prototype.update = function(dt) {
+// update function is continuously called and store actions that are performed over and over, e.g. checking game end
+Player.prototype.update = function() {
   if (this.isOver()) {
     alert("You beat the bugs!");
-    this.x = 200;
-    this.y = 400;
+    this.toStart();
   }
 };
+
+// converts key input to state change in sprite
+Player.prototype.handleInput = function(keyPress) {
+  switch (keyPress) {
+    case 'left':
+      if (this.x >= 0) {
+        this.x = this.x - this.width;
+      }
+      break;
+    case 'right':
+      if (this.x <= board["rightEdge"]) {
+        this.x = this.x + this.width;
+      }
+      break;
+    case 'up':
+      if (this.y >= this.height) {
+        this.y = this.y - this.height;
+      }
+      break;
+    case 'down':
+      if (this.y <= board["bottomEdge"] - this.height) {
+        this.y = this.y + this.height;
+      }
+    }
+}
 
 Player.prototype.render = function() {
  ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-Player.prototype.handleInput = function(direction) {
-  switch (direction) {
-    case 'left':
-      if (this.x >= 40) {
-        this.x = this.x - 40;
-      }
-      break;
-    case 'right':
-      if (this.x <= 360) {
-        this.x = this.x + 40;
-      }
-      break;
-    case 'up':
-      if (this.y >= 40) {
-        this.y = this.y - 40;
-      }
-      break;
-    case 'down':
-      if (this.y <= 360) {
-        this.y = this.y + 40;
-      }
-  }
-}
-
 let player = new Player();
-
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
