@@ -32,7 +32,7 @@ Obstacle.prototype.checkCollision = function(player) {
 }
 // Enemies our player must avoid
 class Enemy {
-  constructor(speed, x, y) {
+  constructor(direction, speed, x, y) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
     this.speed = speed;
@@ -41,11 +41,15 @@ class Enemy {
     // hardcode width  and height as long as there is only one enemy type
     this.width = 40;
     this.height = 30;
+    this.direction = direction;
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
-    this.sprite = 'images/enemy-bug.png';
   }
 };
+
+Enemy.prototype.sprite = function() {
+  return this.direction === "right" ? 'images/enemy-bug.png' : 'images/enemy-bug-leftbound.png'
+}
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
@@ -54,17 +58,26 @@ Enemy.prototype.update = function(dt) {
   // which will ensure the game runs at the same speed for
   // all computers.
    let renderSpeed = this.speed * dt;
-   if (this.x < board["rightEdge"]) {
-     this.x = this.x + renderSpeed;
-   } else {
-     this.x = 0;
-   };
+   if (this.direction === "right") {
+     if (this.x < board["rightEdge"]) {
+       this.x = this.x + renderSpeed;
+     } else {
+      this.x = 0;
+    }
+  } else {
+    if (this.x > 0) {
+      this.x = this.x - renderSpeed;
+    } else {
+      this.x = board["rightEdge"]
+    }
+  }
    this.checkCollisions();
 };
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+  const sprite = this.sprite();
+    ctx.drawImage(Resources.get(sprite), this.x, this.y);
 };
 // enemies and player need to be contiguous, so all four conditions below have to apply jointly, not just one
 Enemy.prototype.checkCollisions = function() {
@@ -113,7 +126,6 @@ Player.prototype.handleInput = function(keyPress) {
   switch (keyPress) {
     case 'left':
     playerAtNewPosition.x = this.x - this.width;
-    console.log(playerAtNewPosition, player)
       if (this.x >= 0 && !allObstacles.some(object => object.checkCollision(playerAtNewPosition))) {
         this.x = this.x - this.width;
       }
@@ -146,7 +158,7 @@ let player = new Player();
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-let allEnemies = [new Enemy(200, 0, 146), new Enemy(100,0,146), new Enemy(250, 0, 300), new Enemy(300,0, 230)];
+let allEnemies = [new Enemy("right", 200, 0, 146), new Enemy("left", 100,0,146), new Enemy("left", 250, 0, 300), new Enemy("right", 300,0, 230)];
 let allObstacles = [new Obstacle(100, 60), new Obstacle(200, 60), new Obstacle(710,55), new Obstacle(500, 500)]
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
