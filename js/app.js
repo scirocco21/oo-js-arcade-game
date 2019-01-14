@@ -1,10 +1,35 @@
 const board = {
   leftEdge: 0,
-  rightEdge: 400,
+  rightEdge: 700,
   topEdge: 0,
-  bottomEdge: 400
+  bottomEdge: 520
 };
 
+// Obstacles to navigate
+class Obstacle {
+  constructor(x,y) {
+    this.x = x;
+    this.y = y;
+    this.width = 40;
+    this.height = 30;
+    this.image = 'images/Rock.png';
+  }
+}
+Obstacle.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.image), this.x, this.y);
+};
+
+// player instance needs to check if the squares are blocked by obstacles before moving
+Obstacle.prototype.checkCollision = function(player) {
+  if (this.x + this.width >= player.x &&
+    player.x + player.width >= this.x  &&
+    this.y + this.height >= player.y &&
+    player.y + player.height >= this.y) {
+      return true
+  } else {
+    return false;
+  }
+}
 // Enemies our player must avoid
 class Enemy {
   constructor(speed, x, y) {
@@ -41,7 +66,6 @@ Enemy.prototype.update = function(dt) {
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
-
 // enemies and player need to be contiguous, so all four conditions below have to apply jointly, not just one
 Enemy.prototype.checkCollisions = function() {
   if (
@@ -53,7 +77,6 @@ Enemy.prototype.checkCollisions = function() {
     player.toStart()
   }
 }
-
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
@@ -70,16 +93,13 @@ class Player {
     this.width = 30;
   }
 }
-
 Player.prototype.toStart = function() {
   this.x = board["rightEdge"]/2;
   this.y = board["bottomEdge"];
 }
-
 Player.prototype.isOver = function() {
   return this.y <= this.height ? true : false;
 }
-
 // update function is continuously called and store actions that are performed over and over, e.g. checking game end
 Player.prototype.update = function() {
   if (this.isOver()) {
@@ -87,27 +107,32 @@ Player.prototype.update = function() {
     this.toStart();
   }
 };
-
 // converts key input to state change in sprite
 Player.prototype.handleInput = function(keyPress) {
+  let playerAtNewPosition = Object.assign({}, player)
   switch (keyPress) {
     case 'left':
-      if (this.x >= 0) {
+    playerAtNewPosition.x = this.x - this.width;
+    console.log(playerAtNewPosition, player)
+      if (this.x >= 0 && !allObstacles.some(object => object.checkCollision(playerAtNewPosition))) {
         this.x = this.x - this.width;
       }
       break;
     case 'right':
-      if (this.x <= board["rightEdge"]) {
+      playerAtNewPosition.x = this.x + this.width;
+      if (this.x <= board["rightEdge"] && !allObstacles.some(object => object.checkCollision(playerAtNewPosition))) {
         this.x = this.x + this.width;
       }
       break;
     case 'up':
-      if (this.y >= this.height) {
+     playerAtNewPosition.y = this.y - this.height;
+      if (this.y >= this.height && !allObstacles.some(object => object.checkCollision(playerAtNewPosition))) {
         this.y = this.y - this.height;
       }
       break;
     case 'down':
-      if (this.y <= board["bottomEdge"] - this.height) {
+     playerAtNewPosition.y = this.y + this.height;
+      if (this.y <= board["bottomEdge"] - this.height && !allObstacles.some(object => object.checkCollision(playerAtNewPosition))) {
         this.y = this.y + this.height;
       }
     }
@@ -121,7 +146,8 @@ let player = new Player();
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-let allEnemies = [new Enemy(200, 0, 230), new Enemy(100,0,146), new Enemy(300,0,65)];
+let allEnemies = [new Enemy(200, 0, 146), new Enemy(100,0,146), new Enemy(250, 0, 300), new Enemy(300,0, 230)];
+let allObstacles = [new Obstacle(100, 60), new Obstacle(200, 60), new Obstacle(710,55), new Obstacle(500, 500)]
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
