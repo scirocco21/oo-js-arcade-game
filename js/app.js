@@ -162,15 +162,27 @@ Player.prototype.toStart = function() {
   this.x = board["rightEdge"]/2;
   this.y = board["bottomEdge"];
 }
-Player.prototype.isOver = function() {
+Player.prototype.reset = function() {
+  this.toStart();
+  this.lives = 3;
+  this.score = 0;
+}
+Player.prototype.won = function() {
   return this.y < board["topEdge"] + this.height ? true : false;
+}
+Player.prototype.lost = function() {
+  return this.lives === 0 ? true : false;
 }
 // update function is continuously called and store actions that are performed over and over, e.g. checking game end
 Player.prototype.update = function() {
-  if (this.isOver()) {
+  if (this.won()) {
     alert("You beat the bugs!");
-    this.toStart();
-    allAssets = [new Asset(), new Asset(), new Asset()
+    this.reset();
+    allAssets = [new Asset(), new Asset(), new Asset()]
+  } else if (this.lost()) {
+    alert("The bugs got you! Try again");
+    this.reset();
+    allAssets = [new Asset(), new Asset(), new Asset()]
   }
 };
 // converts key input to state change in sprite
