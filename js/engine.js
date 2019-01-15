@@ -89,9 +89,9 @@ var Engine = (function(global) {
      * render methods.
      */
     function updateEntities(dt) {
-        allEnemies.forEach(function(enemy) {
-            enemy.update(dt);
-        });
+        // allEnemies.forEach(function(enemy) {
+        //     enemy.update(dt);
+        // });
         player.update();
     }
 
@@ -156,7 +156,9 @@ var Engine = (function(global) {
         allObstacles.forEach(function(obstacle) {
             obstacle.render();
         });
-
+        allAssets.forEach(function(asset) {
+          asset.render();
+        });
         player.render();
     }
 
@@ -179,7 +181,10 @@ var Engine = (function(global) {
         'images/enemy-bug.png',
         'images/char-boy.png',
         'images/Rock.png',
-        'images/enemy-bug-leftbound.png'
+        'images/enemy-bug-leftbound.png',
+        'images/Heart.png',
+        'images/Gem Orange.png',
+        'images/Star.png'
     ]);
     Resources.onReady(init);
 
