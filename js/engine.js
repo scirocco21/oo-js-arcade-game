@@ -19,15 +19,15 @@ var Engine = (function(global) {
      * set the canvas elements height/width and add it to the DOM.
      */
     var doc = global.document,
+        div = $('.container'),
         win = global.window,
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
         lastTime;
 
-    canvas.width = 825;
-    canvas.height = 806;
-    doc.body.appendChild(canvas);
-
+    canvas.width = 815;
+    canvas.height = 670;
+    div[0].append(canvas)
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
      */
@@ -89,9 +89,9 @@ var Engine = (function(global) {
      * render methods.
      */
     function updateEntities(dt) {
-        // allEnemies.forEach(function(enemy) {
-        //     enemy.update(dt);
-        // });
+        allEnemies.forEach(function(enemy) {
+            enemy.update(dt);
+        });
         player.update();
     }
 
