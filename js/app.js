@@ -52,11 +52,14 @@ Asset.prototype.checkCapture = function() {
 Asset.prototype.applyBonus = function() {
   if (this.type === "heart") {
     player.lives = player.lives + 1;
+    $("#lives").text(player.lives);
   } else if (this.type === "gem") {
-    player.score += 2000
+    player.score += 2000;
+    $("#scores").text(player.score);
   } else if (this.type === "star") {
     player.width = player.width * 1.5;
     player.score += 1000;
+    $("#scores").text(player.score);
   }
 }
 Asset.prototype.render = function() {
@@ -141,6 +144,7 @@ Enemy.prototype.checkCollisions = function() {
     this.y + this.height >= player.y
     ) {
     player.lives = player.lives - 1;
+    $("#lives").text(player.lives);
     player.toStart();
   }
 }
@@ -165,7 +169,10 @@ Player.prototype.toStart = function() {
 Player.prototype.reset = function() {
   this.toStart();
   this.lives = 3;
+  $("#lives").text(player.lives);
   this.score = 0;
+  $("#scores").text("0");
+  this.width = 40;
 }
 Player.prototype.won = function() {
   return this.y < board["topEdge"] + this.height ? true : false;
