@@ -231,11 +231,11 @@ Player.prototype.render = function() {
 
 //  instantiate  objects.
 let player = new Player();
-let allEnemies = [new Enemy("right", 200, 0, 146), new Enemy("left", 100,700,146), new Enemy("left", 250, 700, 300), new Enemy("right", 300,0, 230)];
+let allEnemies = [new Enemy("right", 250, 0, 380), new Enemy("left", 350,700,146), new Enemy("left", 270, 700, 300), new Enemy("right", 300,0, 230)];
 let allObstacles = [new Obstacle(100, 60), new Obstacle(200, 60), new Obstacle(710,55), new Obstacle(500, 500)]
 let allAssets = [new Asset(), new Asset(), new Asset()]
 // This listens for key presses and sends the keys to your
-// Player.handleInput() method. You don't need to modify this.
+// Player.handleInput() method. 
 document.addEventListener('keyup', function(e) {
     var allowedKeys = {
         37: 'left',
